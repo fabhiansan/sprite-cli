@@ -121,5 +121,20 @@ def list_sprites(directory):
             click.echo(f"  {path.name} (invalid)")
 
 
+@cli.command("import")
+@click.argument("image")
+@click.option("--name", "-n", default=None, help="Sprite name (default: filename)")
+@click.option("--output", "-o", default=None, help="Output JSON path")
+def import_sprite(image, name, output):
+    """Import a PNG image as a sprite definition."""
+    from sprite_cli.importer import import_image as do_import
+    image_path = Path(image)
+    sprite_data = do_import(image_path, name=name)
+    out = Path(output) if output else _default_output(image, ".json")
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(sprite_data, indent=2))
+    click.echo(f"Imported {image_path.name} -> {out}")
+
+
 if __name__ == "__main__":
     cli()

@@ -90,3 +90,27 @@ def test_list_command():
         result = runner.invoke(cli, ["list", tmp])
         assert result.exit_code == 0
         assert "test.json" in result.output
+
+
+def test_import_command():
+    runner = CliRunner()
+    with tempfile.TemporaryDirectory() as tmp:
+        # Create a simple test PNG
+        from PIL import Image
+        img = Image.new("RGBA", (4, 4), (0, 0, 0, 0))
+        img.putpixel((0, 0), (255, 0, 0, 255))
+        img.putpixel((1, 1), (0, 255, 0, 255))
+        png_path = Path(tmp) / "test.png"
+        img.save(png_path)
+
+        out = Path(tmp) / "imported.json"
+        result = runner.invoke(cli, ["import", str(png_path), "--output", str(out)])
+        assert result.exit_code == 0, result.output
+        assert out.exists()
+
+        # Verify the output is valid JSON and a valid sprite
+        import json
+        data = json.loads(out.read_text())
+        assert data["name"] == "test"
+        assert "palette" in data
+        assert "frames" in data
