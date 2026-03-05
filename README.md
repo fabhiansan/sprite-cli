@@ -7,6 +7,7 @@ Built for creating assets for a kids' educational mobile game (numbers, hijaiyah
 <p align="center">
   <img src="assets/robot.png" width="128" alt="Robot sprite">
   <img src="assets/robot-bounce.gif" width="128" alt="Robot bounce animation">
+  <img src="assets/robot-walk.gif" width="128" alt="Robot walk animation">
   <img src="assets/frog.png" width="128" alt="Frog sprite">
   <img src="assets/frog-bounce.gif" width="128" alt="Frog bounce animation">
   <img src="assets/star.png" width="128" alt="Star sprite">
