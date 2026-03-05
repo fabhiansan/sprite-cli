@@ -4,6 +4,15 @@ A pixel-art sprite CLI designed for AI-driven game asset creation. Write JSON sp
 
 Built for creating assets for a kids' educational mobile game (numbers, hijaiyah letters, etc.).
 
+<p align="center">
+  <img src="assets/robot.png" width="128" alt="Robot sprite">
+  <img src="assets/robot-bounce.gif" width="128" alt="Robot bounce animation">
+  <img src="assets/frog.png" width="128" alt="Frog sprite">
+  <img src="assets/frog-bounce.gif" width="128" alt="Frog bounce animation">
+  <img src="assets/star.png" width="128" alt="Star sprite">
+  <img src="assets/star-sparkle.gif" width="128" alt="Star sparkle animation">
+</p>
+
 ## Install
 
 ```bash
@@ -127,3 +136,42 @@ pytest -v
 ```
 
 34 tests covering models, renderer, transforms, animator, validator, CLI, importer, and end-to-end.
+
+```
+tests/test_animator.py::test_create_animation_from_frames PASSED
+tests/test_animator.py::test_create_animation_from_transforms PASSED
+tests/test_animator.py::test_create_sprite_sheet PASSED
+tests/test_cli.py::test_render_command PASSED
+tests/test_cli.py::test_animate_command PASSED
+tests/test_cli.py::test_sheet_command PASSED
+tests/test_cli.py::test_validate_command PASSED
+tests/test_cli.py::test_info_command PASSED
+tests/test_cli.py::test_list_command PASSED
+tests/test_cli.py::test_import_command PASSED
+tests/test_e2e.py::test_e2e_robot PASSED
+tests/test_models.py::test_parse_minimal_sprite PASSED
+tests/test_models.py::test_parse_sprite_with_animation PASSED
+tests/test_models.py::test_parse_sprite_with_hex_colors_in_grid PASSED
+tests/test_models.py::test_invalid_sprite_missing_name PASSED
+tests/test_renderer.py::test_render_simple_frame PASSED
+tests/test_renderer.py::test_render_transparent_pixels PASSED
+tests/test_renderer.py::test_render_with_size_scaling PASSED
+tests/test_renderer.py::test_render_hex_color_in_grid PASSED
+tests/test_transforms.py::test_translate PASSED
+tests/test_transforms.py::test_translate_up PASSED
+tests/test_transforms.py::test_flip_horizontal PASSED
+tests/test_transforms.py::test_flip_vertical PASSED
+tests/test_transforms.py::test_rotate_90 PASSED
+tests/test_transforms.py::test_recolor PASSED
+tests/test_transforms.py::test_scale PASSED
+tests/test_validator.py::test_validate_valid_sprite PASSED
+tests/test_validator.py::test_validate_missing_name PASSED
+tests/test_validator.py::test_validate_bad_animation_ref PASSED
+tests/test_validator.py::test_validate_bad_json PASSED
+tests/test_importer.py::test_import_simple_image PASSED
+tests/test_importer.py::test_import_fully_transparent PASSED
+tests/test_importer.py::test_import_preserves_colors PASSED
+tests/test_importer.py::test_import_roundtrip PASSED
+
+34 passed in 0.07s
+```
