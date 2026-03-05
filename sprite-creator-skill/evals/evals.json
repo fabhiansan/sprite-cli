@@ -1,0 +1,29 @@
+{
+  "skill_name": "sprite-creator",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create a cute frog sprite for my kid's number learning game. It should bounce when the kid gets the right answer.",
+      "expected_output": "A frog sprite JSON file with green palette, idle frame, and bounce animation. Rendered PNG and GIF in output/.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "I have this robot sprite at examples/robot.json. Can you add a walking animation to it? I want it to look like it's stepping left and right.",
+      "expected_output": "Modified robot.json with new walk frame set (multiple frames showing leg movement). Rendered walk animation GIF.",
+      "files": ["examples/robot.json"]
+    },
+    {
+      "id": 3,
+      "prompt": "Create the Arabic letter 'alif' (ا) as a pixel art character with eyes and a smile. Make it wave hello.",
+      "expected_output": "An alif character sprite JSON with a body shaped like the letter, eyes, mouth. Wave animation with frame-by-frame arm movement.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "I have a star pixel art at examples/star.png. Can you import it, give the palette better names, and add a sparkle animation where it flashes between yellow and white?",
+      "expected_output": "Import star.png to JSON, rename palette keys from c0/c1 to meaningful names like 'gold' and 'yellow', add a recolor-based sparkle animation. Rendered GIF showing the sparkle.",
+      "files": ["examples/star.png"]
+    }
+  ]
+}
