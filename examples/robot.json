@@ -1,0 +1,44 @@
+{
+  "name": "robot",
+  "size": 32,
+  "palette": {
+    "b": "#4A90D9",
+    "d": "#2C5F8A",
+    "e": "#FFFFFF",
+    "p": "#333333",
+    "m": "#FF6B6B",
+    "a": "#7BB3E0"
+  },
+  "frames": {
+    "idle": [
+      [
+        [null,null,null,"d","d","d","d",null,null,null],
+        [null,null,"d","b","b","b","b","d",null,null],
+        [null,"d","b","b","b","b","b","b","d",null],
+        [null,"d","b","e","e","b","e","e","d",null],
+        [null,"d","b","e","p","b","e","p","d",null],
+        [null,"d","b","b","b","b","b","b","d",null],
+        [null,null,"d","b","m","m","b","d",null,null],
+        [null,null,null,"d","d","d","d",null,null,null],
+        [null,null,"a","b","b","b","b","a",null,null],
+        [null,null,null,"b","b","b","b",null,null,null],
+        [null,null,null,"d","d","d","d",null,null,null],
+        [null,null,"d",null,null,null,null,"d",null,null]
+      ]
+    ]
+  },
+  "animations": {
+    "bounce": {
+      "base": "idle",
+      "transforms": [
+        [{"type": "translate", "y": 0}],
+        [{"type": "translate", "y": -1}],
+        [{"type": "translate", "y": -2}],
+        [{"type": "translate", "y": -1}],
+        [{"type": "translate", "y": 0}]
+      ],
+      "fps": 6,
+      "loop": true
+    }
+  }
+}
