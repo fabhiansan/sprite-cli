@@ -51,6 +51,28 @@ def test_parse_sprite_with_animation():
     assert len(sprite.animations["bounce"].transforms) == 2
 
 
+def test_parse_sprite_with_semantic_parts():
+    data = {
+        "name": "robot",
+        "palette": {"body": "#4A90D9"},
+        "frames": {
+            "idle": [
+                [["body", "body"],
+                 ["body", "body"]]
+            ]
+        },
+        "anchors": {
+            "face_center": {"x": 1, "y": 0}
+        },
+        "regions": {
+            "face": {"x": 0, "y": 0, "w": 2, "h": 1}
+        }
+    }
+    sprite = SpriteDefinition.model_validate(data)
+    assert sprite.anchors["face_center"].x == 1
+    assert sprite.regions["face"].w == 2
+
+
 def test_parse_sprite_with_hex_colors_in_grid():
     data = {
         "name": "direct",
@@ -70,3 +92,30 @@ def test_parse_sprite_with_hex_colors_in_grid():
 def test_invalid_sprite_missing_name():
     with pytest.raises(Exception):
         SpriteDefinition.model_validate({"palette": {}, "frames": {}})
+
+
+def test_invalid_animation_fps():
+    with pytest.raises(Exception):
+        SpriteDefinition.model_validate({
+            "name": "bad-fps",
+            "palette": {"r": "#FF0000"},
+            "frames": {"idle": [[["r"]]]},
+            "animations": {
+                "bounce": {
+                    "base": "idle",
+                    "fps": 0,
+                }
+            },
+        })
+
+
+def test_invalid_region_extent():
+    with pytest.raises(Exception):
+        SpriteDefinition.model_validate({
+            "name": "bad-region",
+            "palette": {"r": "#FF0000"},
+            "frames": {"idle": [[["r"]]]},
+            "regions": {
+                "face": {"x": 0, "y": 0, "w": 0, "h": 1}
+            },
+        })

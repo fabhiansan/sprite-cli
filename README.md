@@ -28,6 +28,9 @@ pip install -e ".[dev]"
 # Render the example robot sprite
 sprite render examples/robot.json -o output/robot.png
 
+# Validate a sprite definition before rendering
+sprite validate examples/robot.json
+
 # Create a bounce animation
 sprite animate examples/robot.json -a bounce -o output/robot.gif
 
@@ -124,9 +127,10 @@ Extracts unique colors into an auto-generated palette and builds the pixel grid.
 
 This CLI is designed to be used by AI assistants like Claude. The workflow:
 
-1. AI writes a sprite JSON definition (pixel grid + palette + animations)
-2. CLI renders it to PNG/GIF
-3. AI previews the output and iterates
+1. AI writes or imports a sprite JSON definition
+2. Run `sprite validate` to catch schema and animation-reference errors early
+3. Render with `sprite render`, `sprite animate`, or `sprite sheet`
+4. Preview the output and iterate on the JSON
 
 A **sprite-creator skill** is included in `sprite-creator-skill/` for Claude Code integration.
 

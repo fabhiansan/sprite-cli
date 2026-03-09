@@ -2,8 +2,8 @@ from pathlib import Path
 
 from PIL import Image
 
-from sprite_cli.models import SpriteDefinition, Transform
-from sprite_cli.renderer import render_frame
+from sprite_cli.models import SpriteDefinition
+from sprite_cli.renderer import render_frame, render_pixels
 from sprite_cli.transforms import apply_transform
 
 
@@ -25,10 +25,7 @@ def _generate_transform_frames(
         for t in transforms:
             frame = apply_transform(frame, t)
 
-        temp = sprite.model_copy(update={
-            "frames": {**sprite.frames, "__temp__": [frame]}
-        })
-        img = render_frame(temp, "__temp__", frame_index=0)
+        img = render_pixels(frame, sprite.palette, size=sprite.size)
         images.append(img)
 
     return images
@@ -58,6 +55,9 @@ def create_animation(
 
     fps = fps or 4
     duration = int(1000 / fps)
+    loop = 0
+    if animation_name and animation_name in sprite.animations and not sprite.animations[animation_name].loop:
+        loop = 1
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     images[0].save(
@@ -65,7 +65,7 @@ def create_animation(
         save_all=True,
         append_images=images[1:],
         duration=duration,
-        loop=0,
+        loop=loop,
         disposal=2,
     )
 

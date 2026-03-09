@@ -25,6 +25,13 @@ SAMPLE_SPRITE = {
             ],
             "fps": 4,
         }
+    },
+    "anchors": {
+        "face_center": {"x": 1, "y": 0},
+        "left_hand": {"x": 0, "y": 1}
+    },
+    "regions": {
+        "face": {"x": 0, "y": 0, "w": 2, "h": 1}
     }
 }
 
@@ -81,6 +88,20 @@ def test_info_command():
         result = runner.invoke(cli, ["info", str(sprite_path)])
         assert result.exit_code == 0
         assert "test" in result.output
+        assert "face_center" in result.output
+
+
+def test_analyze_command():
+    runner = CliRunner()
+    with tempfile.TemporaryDirectory() as tmp:
+        sprite_path = _write_sprite(tmp)
+        result = runner.invoke(cli, ["analyze", str(sprite_path)])
+        assert result.exit_code == 0, result.output
+        data = json.loads(result.output)
+        assert data["name"] == "test"
+        assert data["canvas"] == {"width": 2, "height": 2}
+        assert data["anchors"]["face_center"]["x"] == 1
+        assert data["regions"]["face"]["w"] == 2
 
 
 def test_list_command():

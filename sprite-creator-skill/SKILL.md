@@ -16,13 +16,15 @@ The sprite-cli must be installed. The project lives at the root of this reposito
 1. **Design** — decide what to draw (character, object, letter, number)
 2. **Choose palette** — pick 3-6 colors that work together
 3. **Draw the pixel grid** — write the 2D array row by row
-4. **Validate** — run `sprite validate <file>.json`
-5. **Render** — run `sprite render <file>.json -o output/<name>.png`
-6. **Preview** — use the Read tool to view the rendered PNG
-7. **Iterate** — adjust pixels, re-render, repeat until it looks right
-8. **Animate** — add animation frames or transforms, then `sprite animate <file>.json -o output/<name>.gif`
+4. **Annotate semantics** — for characters and other agent-driven sprites, add `anchors` and `regions` for important parts like face, hands, feet, or item attach points
+5. **Validate** — run `sprite validate <file>.json`
+6. **Analyze** — run `sprite analyze <file>.json` and inspect the JSON output to confirm anchors and regions are where you expect
+7. **Render** — run `sprite render <file>.json -o output/<name>.png`
+8. **Preview** — use the Read tool to view the rendered PNG
+9. **Iterate** — adjust pixels and semantic metadata, then re-run validate/analyze/render
+10. **Animate** — add animation frames or transforms, then `sprite animate <file>.json -o output/<name>.gif`
 
-Always validate and render after creating or modifying a sprite. Always preview the output with the Read tool so you can see what you made and fix issues.
+Always validate, analyze, and render after creating or modifying a sprite. Always preview the output with the Read tool so you can see what you made and fix issues.
 
 ## JSON Schema (exact fields)
 
@@ -56,6 +58,15 @@ Always validate and render after creating or modifying a sprite. Always preview 
       "fps": 6,
       "loop": true
     }
+  },
+  "anchors": {
+    "face_center": {"x": 1, "y": 1},
+    "left_hand": {"x": 0, "y": 2},
+    "right_hand": {"x": 3, "y": 2}
+  },
+  "regions": {
+    "face": {"x": 1, "y": 1, "w": 2, "h": 1},
+    "body": {"x": 0, "y": 1, "w": 4, "h": 3}
   }
 }
 ```
@@ -69,6 +80,33 @@ Always validate and render after creating or modifying a sprite. Always preview 
 | `palette` | Yes | object | Map of short keys (1-2 chars) to hex color strings. `null` value = transparent. |
 | `frames` | Yes | object | Map of frame set names to arrays of frames. Each frame is a 2D array of rows. Each pixel is a palette key, hex string, or `null`. |
 | `animations` | No | object | Map of animation names to animation objects (see below). |
+| `anchors` | No | object | Map of semantic point names to `{x, y}` coordinates. Use for face centers, hands, feet, attach points, etc. |
+| `regions` | No | object | Map of semantic boxes to `{x, y, w, h}`. Use for faces, bodies, hands, hit areas, or interaction zones. |
+
+### Semantic metadata rules
+
+- Prefer explicit semantics over guesswork. If an agent needs to know where a face, hand, foot, or held item is, declare it in `anchors` or `regions`.
+- Use `anchors` for single points such as `face_center`, `left_hand`, `right_foot`, `weapon_tip`, `attach_hat`.
+- Use `regions` for areas such as `face`, `body`, `left_arm`, `mouth`, `pickup_zone`.
+- Coordinates are in source grid space, not scaled output pixels.
+- Anchors and regions must fit inside the sprite canvas or `sprite validate` will fail.
+- Name parts consistently. Prefer `left_hand` / `right_hand`, `left_foot` / `right_foot`, `face_center`, `body`, `mouth`.
+
+Example:
+
+```json
+{
+  "anchors": {
+    "face_center": {"x": 5, "y": 3},
+    "left_hand": {"x": 2, "y": 8},
+    "right_hand": {"x": 8, "y": 8}
+  },
+  "regions": {
+    "face": {"x": 3, "y": 1, "w": 4, "h": 4},
+    "body": {"x": 2, "y": 4, "w": 6, "h": 6}
+  }
+}
+```
 
 ### Animation object fields
 
@@ -171,6 +209,24 @@ The same principle applies to waving — copy the idle frame, then change the ar
 - Bouncing, sliding, spinning, color flashing → **transform-based** (the sprite shape stays the same)
 - Both in one sprite → put the simple motion in `animations` and the complex motion as multiple frames in `frames`. Use separate CLI calls to render each.
 
+## Agent-Oriented Workflow
+
+When the sprite will be consumed by an AI agent, do not stop at getting the image to look correct. The sprite definition should also expose the parts the agent needs.
+
+1. Draw the sprite first.
+2. Add `anchors` for point-like parts the agent must target or reason about.
+3. Add `regions` for larger areas the agent must detect or align against.
+4. Run `sprite validate <file>.json`.
+5. Run `sprite analyze <file>.json`.
+6. Read the JSON output and confirm:
+   - the reported canvas matches the intended grid
+   - the expected anchors exist
+   - the expected regions exist
+   - normalized coordinates are reasonable
+7. Render and preview the image.
+
+If a user asks for “detect the face”, “place the hand”, “mark the mouth”, or “tell the agent where to attach an item”, add semantic metadata instead of trying to infer it later from pixels.
+
 ## Drawing Pixel Art
 
 Think in rows from top to bottom, each row left to right. Use `null` for transparent/empty pixels.
@@ -225,6 +281,9 @@ sprite validate <file>.json
 # Show sprite info
 sprite info <file>.json
 
+# Emit machine-readable analysis for AI agents
+sprite analyze <file>.json
+
 # List sprites in a directory
 sprite list examples/
 
@@ -249,15 +308,19 @@ This extracts all unique colors into an auto-generated palette (c0, c1, c2...) a
 2. **Mixing animation approaches** — if you have frame-by-frame frames in `walk`, don't also create an `animations.walk` entry with transforms. Pick one.
 3. **Forgetting `--frame` flag** — for frame-by-frame animations, always use `sprite animate --frame <name>`. Without it, the CLI looks for transform-based animations.
 4. **Not validating** — always run `sprite validate` before rendering. It catches schema issues early.
-5. **Not previewing** — always use the Read tool to look at the rendered PNG/GIF. Pixel art often needs iteration.
+5. **Not adding semantics for agent use** — if the sprite will be consumed by an AI agent, add `anchors` and `regions` instead of expecting the agent to infer body parts from raw pixels.
+6. **Not checking analysis output** — run `sprite analyze` and read the JSON. It is the fastest way to verify that semantic metadata is usable.
+7. **Not previewing** — always use the Read tool to look at the rendered PNG/GIF. Pixel art often needs iteration.
 
 ## Example: Full Character Creation
 
 1. Write the JSON with palette and idle frame
 2. Save to `examples/cat.json`
-3. Run `sprite validate examples/cat.json`
-4. Run `sprite render examples/cat.json -o output/cat.png`
-5. View the output with the Read tool
+3. Add `anchors` and `regions` if an agent needs to reason about the sprite
+4. Run `sprite validate examples/cat.json`
+5. Run `sprite analyze examples/cat.json`
+6. Run `sprite render examples/cat.json -o output/cat.png`
+7. View the output with the Read tool
 6. Adjust pixels if needed, re-render
 7. Add a bounce animation (transform-based) or walk frames (frame-by-frame)
 8. Run `sprite animate examples/cat.json -a bounce -o output/cat-bounce.gif`

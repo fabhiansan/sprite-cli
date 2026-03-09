@@ -4,3 +4,5 @@ dist
 build
 output
 .venv
+.DS_Store
+sprite-creator-skill-workspace/
